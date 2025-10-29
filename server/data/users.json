@@ -14,5 +14,21 @@
   {
     "username": "wawa",
     "password": "$2b$10$hNmaTSt/FHY0jlmWoj4C2e8Sm.ZfkefhO.BlPHlcjMumvd6i8m/1q"
+  },
+  {
+    "username": "login2",
+    "password": "$2b$10$thOiw7XZnnfJsINxXhobk.gdeiK25tEFVVk91Sm7Pv6yB/ZTKAea6"
+  },
+  {
+    "username": "w",
+    "password": "$2b$10$P6i.iheanVUKGtn7STLV8O4nthyPUrGZpq7vscEB9dGj60zMC2Sni"
+  },
+  {
+    "username": "user1",
+    "password": "$2b$10$.AkP.FKwtvFr4J5jltzMbOMXiGv3kEc012wF7Cah2gij0hhSPI6T2"
+  },
+  {
+    "username": "user2",
+    "password": "$2b$10$rnSrfWuIocw9wlYIsDp.gu.uGz7A5vWBaEifxFB4d8pYRAKn9Ih32"
   }
 ]

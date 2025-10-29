@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 
-const SECRET = 'MY_SUPER_SECRET_KEY'; // В реальном проекте хранить в env
+const SECRET = 'MY_SUPER_SECRET_KEY';
 
 function authMiddleware(req, res, next) {
     console.log("token = ", token);
-    const token = req.cookies?.token; // читаем из HttpOnly cookie
+    const token = req.cookies?.token;
 
     if (!token) return res.status(401).json({ error: 'Unauthorized' });
 

@@ -118,7 +118,7 @@ app.post('/api/login', async (req, res) => {
     }
 
     const token = jwt.sign({ username }, SECRET, { expiresIn: '1h' });
-    res.cookie('token', token, { httpOnly: true, sameSite: 'strict', maxAge: 3600000 });
+    res.cookie('token', token, { httpOnly: true, sameSite: 'strict', maxAge: 60*60*1000 });
     res.json({ message: 'Logged in' });
 });
 
@@ -131,17 +131,23 @@ app.post('/api/logout', (req, res) => {
 app.get('/api/tasks', authMiddleware, (req, res) => {
     const status = req.query.status;
     let tasks = readDB();
+
+    // 👇 фильтруем задачи только для текущего пользователя
+    tasks = tasks.filter(t => t.owner === req.user.username);
+
     if (status) tasks = tasks.filter(t => t.status === status);
     res.json(tasks);
 });
 
+
 app.get('/api/tasks/:id', authMiddleware, (req, res) => {
-    const id = req.params.id;
-    const task = readDB().find(t => t.id === id);
+    const task = readDB().find(t => t.id === req.params.id);
+
     if (!task) return res.status(404).json({ error: 'Task not found' });
+    if (task.owner !== req.user.username) return res.status(403).json({ error: 'Forbidden' }); // 👈 проверка
+
     res.json(task);
 });
-
 app.post('/api/tasks', authMiddleware, upload.array('attachments', 5), (req, res) => {
     const tasks = readDB();
     const { title = 'Untitled', status = 'todo', dueDate = null } = req.body;
@@ -153,17 +159,26 @@ app.post('/api/tasks', authMiddleware, upload.array('attachments', 5), (req, res
         url: `/uploads/${f.filename}`
     }));
 
-    const task = { id, title, status, dueDate, attachments };
+    const task = {
+        id,
+        title,
+        status,
+        dueDate,
+        attachments,
+        owner: req.user.username // 👈 добавляем владельца
+    };
+
     tasks.push(task);
     writeDB(tasks);
     res.status(201).json(task);
 });
 
 app.put('/api/tasks/:id', authMiddleware, (req, res) => {
-    const id = req.params.id;
     const tasks = readDB();
-    const idx = tasks.findIndex(t => t.id === id);
+    const idx = tasks.findIndex(t => t.id === req.params.id);
+
     if (idx === -1) return res.status(404).json({ error: 'Task not found' });
+    if (tasks[idx].owner !== req.user.username) return res.status(403).json({ error: 'Forbidden' }); // 👈
 
     ['title','status','dueDate'].forEach(k => {
         if (req.body[k] !== undefined) tasks[idx][k] = req.body[k];
@@ -172,6 +187,7 @@ app.put('/api/tasks/:id', authMiddleware, (req, res) => {
     writeDB(tasks);
     res.json(tasks[idx]);
 });
+
 
 app.post('/api/tasks/:id/attachments', authMiddleware, upload.array('attachments', 5), (req, res) => {
     const id = req.params.id;
@@ -190,15 +206,20 @@ app.post('/api/tasks/:id/attachments', authMiddleware, upload.array('attachments
 });
 
 app.delete('/api/tasks/:id', authMiddleware, (req, res) => {
-    const id = req.params.id;
     const tasks = readDB();
-    const idx = tasks.findIndex(t => t.id === id);
-    if (idx === -1) return res.status(404).json({ error: 'Task not found' });
+    const idx = tasks.findIndex(t => t.id === req.params.id);
 
-    const removed = tasks.splice(idx,1)[0];
+    if (idx === -1) return res.status(404).json({ error: 'Task not found' });
+    if (tasks[idx].owner !== req.user.username) return res.status(403).json({ error: 'Forbidden' }); // 👈
+
+    const removed = tasks.splice(idx, 1)[0];
     writeDB(tasks);
     res.json({ deleted: removed.id });
 });
+app.get('/api/me', authMiddleware, (req, res) => {
+    res.json({ username: req.user.username });
+});
+
 
 // Serve uploads
 app.use('/uploads', express.static(UPLOAD_DIR));
