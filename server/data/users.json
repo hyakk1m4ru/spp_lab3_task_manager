@@ -30,5 +30,13 @@
   {
     "username": "user2",
     "password": "$2b$10$rnSrfWuIocw9wlYIsDp.gu.uGz7A5vWBaEifxFB4d8pYRAKn9Ih32"
+  },
+  {
+    "username": "users",
+    "password": "$2b$10$YAAob3FknmG.ayAW5FGxFuoAULq5ym/6qRsqD36C0B7e9P07/YSmy"
+  },
+  {
+    "username": "qwerty",
+    "password": "$2b$10$WHS0OTBWSVr3saEhKiPZuuvSPWKORIJxbIRKH4Zw751XxZMKg5o/y"
   }
 ]
