@@ -38,5 +38,9 @@
   {
     "username": "qwerty",
     "password": "$2b$10$WHS0OTBWSVr3saEhKiPZuuvSPWKORIJxbIRKH4Zw751XxZMKg5o/y"
+  },
+  {
+    "username": "undefined",
+    "password": "$2b$10$IgDYo.TuVMwoqwQAxc8dWuVJid2hWQv7Yz9xq0Q2KkzkUuBkPCJEy"
   }
 ]
